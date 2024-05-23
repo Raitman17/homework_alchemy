@@ -1,19 +1,9 @@
 name: Main test
 on: [push]
 jobs:
-  container-job:
-    name: Tests
+  tests:
+    name: Test pages
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_HOST: 127.0.0.1
-          POSTGRES_PORT: 5432
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-        ports:
-        - 5432:5432
     steps:
     - uses: actions/checkout@v2
     - name: Python installation
@@ -24,8 +14,22 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
-        docker compose up -d --build
+    - name: Make .env file
+      uses: SpicyPizza/create-envfile@v2.0
+      with:
+        envkey_PG_DBNAME: ${{ secrets.PG_DBNAME }}
+        envkey_PG_USER: ${{ secrets.PG_USER }}
+        envkey_PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        envkey_PG_PORT: ${{ secrets.PG_PORT }}
+        envkey_PG_HOST: ${{ secrets.PG_HOST }}
+        envkey_FOOTBAll_KEY: ${{ secrets.FOOTBAll_KEY }}
+        envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        envkey_FLASK_PORT: ${{ secrets.FLASK_PORT}}
+    - name: Start docker container
+      run: docker compose up -d --build
     - name: Test pages
       run: pytest test_pages.py
     - name: Linter
       run: flake8
+    - name: Stop docker container
+      run: docker compose down
