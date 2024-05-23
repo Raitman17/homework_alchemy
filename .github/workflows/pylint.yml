@@ -23,7 +23,9 @@ jobs:
     - name: Dependencies installation
       run: |
         python3 -m pip install --upgrade pip
-        pip install -r tests/requirements.txt
+        pip install -r requirements.txt
         docker compose up -d --build
     - name: Test pages
       run: pytest test_pages.py
+    - name: Linter
+      run: flake8
