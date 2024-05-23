@@ -297,16 +297,38 @@ get_player = create_get(Player)
 get_team = create_get(Team)
 
 
-def get_all_teams(session: Session) -> list[Team]:
-    """Получить все команды.
+def create_get_all(model_class) -> Callable:
+    """Создать метод для получения всех записей модели.
 
     Args:
-        session (Session): сессия
+        model_class (_type_): класс модели
 
     Returns:
-        list[Team]: список объектов класса команда
+        Callable: функция для получения данных о записи
     """
-    return session.scalars(select(Team))
+    def get_all_obj(session: Session) -> list:
+        """Получить все записи модели.
+
+        Args:
+            session (Session): сессия
+
+        Returns:
+            list: список объектов класса команда
+        """
+        model_values = [mod_val.__dict__ for mod_val in session.scalars(select(model_class))]
+        for mod_val in model_values:
+            mod_val.pop('_sa_instance_state', None)
+            for keys, value_field in mod_val.items():
+                if isinstance(value_field, UUID):
+                    mod_val[keys] = str(value_field)
+        return model_values
+    return get_all_obj
+
+
+get_all_teams = create_get_all(Team)
+get_all_stadium = create_get_all(Stadium)
+get_all_league = create_get_all(League)
+get_all_player = create_get_all(Player)
 
 
 def get_players_of_team(team_id, session: Session) -> list[dict]:

@@ -3,7 +3,7 @@ from os import environ
 from uuid import UUID
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 
@@ -36,7 +36,7 @@ def homepage():
         _type_: _description_
     """
     with db.Session(engine) as session:
-        context = {'content': [team.__dict__ for team in db.get_all_teams(session)]}
+        context = {'content': db.get_all_teams(session)}
     return render_template('index.html', **context), config.OK
 
 
@@ -87,32 +87,57 @@ def add_team():
     return render_template('add_team.html', **context, form=form), config.OK
 
 
-@app.post('/<model>/<method>')
-def post_methods(model: str, method: str):
-    """Пост методы: создание/обновление записи модели.
+@app.post('/<model>/create')
+def create_model(model: str):
+    """Создание записи модели.
 
     Args:
         model (str): модель
-        method (str): метод
 
     Returns:
         _type_: _description_
     """
     body = request.json
     functions = {
-        'team': {'create': db.create_team, 'update': db.update_team},
-        'league': {'create': db.create_league, 'update': db.update_league},
-        'stadium': {'create': db.create_stadium, 'update': db.update_stadium},
-        'player': {'create': db.create_player, 'update': db.update_player},
+        'team': db.create_team,
+        'league': db.create_league,
+        'stadium': db.create_stadium,
+        'player': db.create_player,
     }
-    if model in functions.keys() and method in functions[model].keys():
+    if model in functions.keys():
         with db.Session(engine) as session:
-            res = functions[model][method](body, session)
+            res = functions[model](body, session)
     else:
         return '', config.NOT_FOUND
     if res:
-        status_code = config.CREATED if method == 'create' else config.OK
-        return str(res), status_code
+        return str(res), config.CREATED
+    return '', config.BAD_REQUEST
+
+
+@app.put('/<model>/update')
+def update_model(model: str):
+    """Обновление записи модели.
+
+    Args:
+        model (str): модель
+
+    Returns:
+        _type_: _description_
+    """
+    body = request.json
+    functions = {
+        'team': db.update_team,
+        'league': db.update_league,
+        'stadium': db.update_stadium,
+        'player': db.update_player,
+    }
+    if model in functions.keys():
+        with db.Session(engine) as session:
+            res = functions[model](body, session)
+    else:
+        return '', config.NOT_FOUND
+    if res:
+        return str(res), config.OK
     return '', config.BAD_REQUEST
 
 
@@ -140,6 +165,32 @@ def delete_model(model: str):
         return '', config.NOT_FOUND
     if res:
         return '', config.NO_CONTENT
+    return '', config.BAD_REQUEST
+
+
+@app.get('/<model>')
+def get_model_all(model: str):
+    """Получить все записи модели.
+
+    Args:
+        model (str): модель
+
+    Returns:
+        _type_: _description_
+    """
+    functions = {
+        'teams': db.get_all_teams,
+        'leagues': db.get_all_league,
+        'stadiums': db.get_all_stadium,
+        'players': db.get_all_player,
+    }
+    if model in functions.keys():
+        with db.Session(engine) as session:
+            res = {f'{model}': functions[model](session)}
+    else:
+        return '', config.NOT_FOUND
+    if res:
+        return jsonify(res), config.OK
     return '', config.BAD_REQUEST
 
 

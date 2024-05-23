@@ -8,7 +8,7 @@ import requests
 import config
 
 league_data = {
-    'name': 'abc',
+    'name': 'abcd',
     'country': 'abc',
 }
 
@@ -37,7 +37,8 @@ UPDATE = 'update'
 DELETE = 'delete'
 HEADERS = {'Content-Type': 'application/json'}
 URL = 'http://127.0.0.1:5000/'
-GET_DATA = (URL, f'{URL}add_team')
+PATHS = ('', 'add_team', 'stadiums', 'leagues', 'players', 'teams')
+LINKS = [f'{URL}{path}' for path in PATHS]
 POST_DATA = (
     ('team', team_data),
     ('league', league_data),
@@ -46,14 +47,14 @@ POST_DATA = (
 )
 
 
-@pytest.mark.parametrize('url', GET_DATA)
-def test_get(url: str):
+@pytest.mark.parametrize('link', LINKS)
+def test_get(link: str):
     """Тест страниц.
 
     Args:
-        url (str): ссылка
+        link (str): ссылка
     """
-    response = requests.get(url, timeout=10)
+    response = requests.get(link, timeout=10)
     assert response.status_code == config.OK
 
 
@@ -91,7 +92,7 @@ def test_post_delete(model: str, model_data: dict):
     assert create_bad_req.status_code == config.BAD_REQUEST
 
     model_data['id'] = create_ok.content.decode()
-    update_ok = requests.post(
+    update_ok = requests.put(
         f'{URL}{model}/{UPDATE}',
         headers=HEADERS,
         data=json.dumps(model_data),
@@ -115,7 +116,7 @@ def test_post_delete(model: str, model_data: dict):
             timeout=10,
         )
 
-    update_bad_req = requests.post(
+    update_bad_req = requests.put(
         f'{URL}{model}/{UPDATE}',
         headers=HEADERS,
         data=json.dumps(model_data),
