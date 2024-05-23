@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% block title %}<title>football</title>{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <div>
+    <a href="{{ url_for('homepage')}}" class = "home_link">
+      <h1>Домашняя страница</h1>
+    </a>
+    <a href="{{ url_for('add_team')}}" class = "add_team_link">
+      <h1>Добавить команду</h1>
+    </a>
+  </div>
+</head>
+<body style="background-color: #deeef5;">
+  {% block content %}<!-- default content text (typically empty) -->{% endblock %}
+</body>
+</html>

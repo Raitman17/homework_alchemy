@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  {% if content %}
+    <h1 style="text-align: center;">Команды</h1>
+    <ul class ="list">
+      {% for team in content %}
+        <li> <a href="{{ url_for('team', team_id=team['id']) }}" style="text-decoration: none; color: black;">
+          <h3>{{ team['name'] }}</h3>
+          <img src="{{ team['logo'] }}">
+        </a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p> Тут пусто</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name() }}
+    {{ form.league.label }} {{ form.league() }}
+    {{ form.country.label }} {{ form.country() }}
+    {{ form.submit() }}
+</form>
+<h1>{{ msg }}</h1>
+{% endblock %}

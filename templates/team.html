@@ -1,0 +1,65 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  <div class="team">
+    <div class="team_info">
+      <h1>Команда</h1>
+      <h3> {{ team['name'] }}</h3>
+      <h3> founded in {{ team['founded'] }}</h3>
+      <img src="{{ team['logo'] }}">
+    </div>
+    <div class="team_info">
+      <h1>Лига</h1>
+      {% if league %}
+        <h3>{{ league['name'] }}</h3>
+        <h3>страна: {{ league['country'] }}</h3>
+        <img src="{{ league['logo'] }}"> 
+      {% else %}
+        <p> Тут пусто</p>
+      {% endif %}
+    </div>
+    <div class="team_info">
+      <h1>Стадион</h1>
+      {% if stadium %}
+        <h3>{{ stadium['name'] }}</h3>
+        <h3>город: {{ stadium['city'] }}</h3>
+        <h3>адрес: {{ stadium['address'] }}</h3>
+        <h3>вместимость: {{ stadium['capacity'] }}</h3>
+        <h3>покрытие: {{ stadium['surface'] }}</h3>
+      {% else %}
+        <p> Тут пусто</p>
+      {% endif %}
+    </div>
+    <div class="team_info">
+      {% if stadium %}
+        <img src="{{ stadium['image'] }}" style="width: 300px; height: 300px;">
+      {% else %}
+        <p> Тут пусто</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="team">
+    {% if players %}
+      <h1 style="text-align: center;">Players</h1>
+      {% for player in players %}
+      <div class="players">
+        <a href="#{{ player['id'] }}" class="open-player">
+          <h3>{{ player['name'] }}</h3>
+          <img src="{{ player['photo'] }}">
+        </a>
+      </div>
+      <div id="{{ player['id'] }}" class="player-open">
+        <div class="player-inner">
+            <img src="{{ player['photo'] }}">
+            <h3>имя: {{ player['name'] }}</h3>
+            <h3>возраст: {{ player['age'] }}</h3>
+            <h3>номер: {{ player['number'] }}</h3>
+            <h3>позиция: {{ player['position'] }}</h3>
+            <a href="#player-close" class="close-player">x</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p> Тут пусто</p>
+    {% endif %}
+  </div>
+{% endblock %}

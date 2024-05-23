@@ -1,0 +1,14 @@
+"""Config."""
+OK = 200
+CREATED = 201
+NO_CONTENT = 204
+BAD_REQUEST = 400
+FORBIDDEN = 403
+SERVER_ERROR = 500
+NOT_FOUND = 404
+NOT_ALLOWED = 405
+ACCEPTED = 202
+
+FOOTBALL_URL = 'https://v3.football.api-sports.io'
+FOOTBALL_HEADER = 'x-rapidapi-key'
+SEASON = 2023

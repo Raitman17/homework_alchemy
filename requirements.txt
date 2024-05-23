@@ -1,0 +1,15 @@
+Flask==3.0.2
+gunicorn==21.2.0
+bandit==1.7.5
+wemake-python-styleguide==0.18.0
+flake8==6.1.0
+flake8-bandit==4.1.1
+requests==2.31.0
+Flask-WTF==1.2.1
+
+python-dotenv==1.0.1
+psycopg2==2.9.6
+psycopg2-binary==2.9.5
+python-dotenv==1.0.1
+sqlalchemy==2.0.28
+alembic==1.8.1
